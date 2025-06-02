@@ -1,5 +1,5 @@
 import streamlit as st
-from factory_agent import ask_question
+import factory_agent
 from downtime_model import estimate_downtime
 
 st.set_page_config(
@@ -29,7 +29,7 @@ if uploaded_file:
     
     if user_question:
         with st.spinner("AI 正在分析中..."):
-            answer, downtime = ask_question(uploaded_file, user_question)
+            answer, downtime = factory_agent.ask_question(uploaded_file, user_question)
             
             # 顯示回答
             st.markdown("### AI 回答")

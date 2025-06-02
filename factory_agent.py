@@ -1,4 +1,4 @@
-from langchain.agents import create_csv_agent
+from langchain_experimental.agents import create_csv_agent
 from langchain_openai import ChatOpenAI
 from downtime_model import estimate_downtime
 import pandas as pd
