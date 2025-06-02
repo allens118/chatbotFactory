@@ -111,3 +111,88 @@ Time,Machine,ErrorType,RepairTime,Description
 這個專案的程式碼將被上傳到以下 GitHub 儲存庫：
 
 `git@github.com:allens118/chatbotFactory.git` 
+
+## 工廠智能助手
+
+這是一個基於 AI 的工廠智能助手，可以分析機器故障數據並提供智能建議。
+
+## 功能特點
+
+- 分析機器故障數據
+- 預估停機時間
+- 提供故障原因分析
+- 智能問答功能
+- 自動化報告生成
+
+## 安裝步驟
+
+1. 克隆專案：
+```bash
+git clone https://github.com/yourusername/chatBotFactory.git
+cd chatBotFactory
+```
+
+2. 建立並啟動虛擬環境：
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# Linux/Mac
+python -m venv venv
+source venv/bin/activate
+```
+
+3. 安裝依賴套件：
+```bash
+pip install -r requirements.txt
+```
+
+4. 設定 API Key：
+   - 在專案根目錄建立 `api_key.txt` 檔案
+   - 將您的 OpenAI API Key 放入檔案中
+   - 或設定環境變數：
+     ```bash
+     # Windows PowerShell
+     $env:OPENAI_API_KEY="your-api-key"
+     
+     # Linux/Mac
+     export OPENAI_API_KEY="your-api-key"
+     ```
+
+## 使用方式
+
+1. 啟動應用程式：
+```bash
+streamlit run app.py
+```
+
+2. 在瀏覽器中開啟 http://localhost:8501
+
+3. 上傳 CSV 檔案（格式如下）：
+```csv
+Time,Machine,ErrorType,RepairTime,Description
+2024-03-20 08:00,MachineA,Overheat,35,機器過熱，需要冷卻
+```
+
+4. 輸入問題，例如：
+   - "哪台機器故障次數最多？"
+   - "平均修復時間是多少？"
+   - "最常見的故障類型是什麼？"
+
+## 注意事項
+
+- 請確保您的 API Key 安全，不要上傳到版本控制系統
+- CSV 檔案必須包含必要的欄位：Time, Machine, ErrorType, RepairTime, Description
+- 時間格式應為：YYYY-MM-DD HH:MM
+
+## 開發者資訊
+
+- Python 3.9+
+- Streamlit 1.32.0
+- LangChain 0.0.350
+- OpenAI API
+
+## 授權
+
+MIT License 
