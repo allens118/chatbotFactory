@@ -1,4 +1,4 @@
-黨Time,Machine,ErrorType,RepairTime,Description
+Time,Machine,ErrorType,RepairTime,Description
 2024-03-20 08:00,MachineA,Overheat,35,機器過熱，需要冷卻
 2024-03-20 09:00,MachineB,Network issue,55,網路連線中斷
 2024-03-20 10:00,MachineC,Sensor error,25,感測器異常

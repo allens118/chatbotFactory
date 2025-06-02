@@ -1,6 +1,7 @@
 import streamlit as st
 import factory_agent
-from downtime_model import estimate_downtime
+import pandas as pd
+import io
 
 st.set_page_config(
     page_title="工廠 AI 聊天助理",
@@ -20,26 +21,65 @@ with st.sidebar:
     4. 若停機時間超過 40 分鐘，系統會自動發出升級通知
     """)
 
-# 檔案上傳區
+# 上傳檔案
 uploaded_file = st.file_uploader("請上傳機台故障紀錄 (CSV)", type="csv")
 
-if uploaded_file:
-    # 問題輸入區
-    user_question = st.text_input("請輸入問題：", placeholder="例如：這台機器為什麼昨天停機？")
+if uploaded_file is not None:
+    # 讀取並顯示原始資料
+    uploaded_file.seek(0)  # 重置檔案指針
+    content = uploaded_file.read().decode('utf-8-sig')
+    df = pd.read_csv(io.StringIO(content))
     
-    if user_question:
-        with st.spinner("AI 正在分析中..."):
-            answer, downtime = factory_agent.ask_question(uploaded_file, user_question)
+    # 顯示資料統計
+    st.write("資料統計：")
+    st.write(f"總筆數：{len(df)} 筆")
+    
+    # 顯示資料預覽
+    st.write("資料預覽：")
+    preview_rows = st.slider("顯示筆數", 5, 50, 10)
+    st.dataframe(df.head(preview_rows))
+    
+    # 問題輸入
+    question = st.text_input("請輸入問題：")
+    
+    if question:
+        # 處理問題
+        uploaded_file.seek(0)  # 重置檔案指針
+        response, downtime = factory_agent.ask_question(uploaded_file, question)
+        
+        # 顯示回答
+        st.write("AI 回答")
+        st.write(response)
+        
+        # 顯示停機時間
+        st.write("停機時間分析")
+        st.write(f"預估停機時間\n{downtime:.2f} 分鐘")
+        
+        # 檢查是否需要升級通知
+        if downtime > 40:
+            st.warning("⚠️ 須升級通知主管 (停機時間超過 40 分鐘)")
+            st.info("建議立即聯繫相關主管進行處理")
+        
+        # 如果是生成新資料的請求，顯示新生成的資料
+        if "生成" in question and ("狀態" in question or "資料" in question):
+            # 重新讀取檔案以獲取更新後的資料
+            uploaded_file.seek(0)  # 重置檔案指針
+            content = uploaded_file.read().decode('utf-8-sig')
+            updated_df = pd.read_csv(io.StringIO(content))
             
-            # 顯示回答
-            st.markdown("### AI 回答")
-            st.markdown(f"{answer}")
+            # 顯示新生成的資料
+            st.write("新生成的資料：")
+            st.dataframe(updated_df.tail(10))  # 顯示最後10筆資料
             
-            # 顯示停機時間
-            st.markdown("### 停機時間分析")
-            st.metric("預估停機時間", f"{downtime:.2f} 分鐘")
+            # 顯示更新後的資料統計
+            st.write("更新後的資料統計：")
+            st.write(f"總筆數：{len(updated_df)} 筆")
             
-            # 升級通知判斷
-            if downtime > 40:
-                st.warning("⚠️ 須升級通知主管 (停機時間超過 40 分鐘)")
-                st.info("建議立即聯繫相關主管進行處理") 
+            # 提供下載更新後資料的選項
+            csv = updated_df.to_csv(index=False, encoding='utf-8')
+            st.download_button(
+                label="下載更新後的資料",
+                data=csv,
+                file_name="updated_factory_data.csv",
+                mime="text/csv"
+            ) 
